@@ -1,0 +1,24 @@
+{
+  "findAllComposers": [
+    {
+      "composerId": 1224,
+      "firstName": "Hans",
+      "lastName": "Zimmer"
+    },
+    {
+      "composerId": 1245,
+      "firstName": "Ludwig",
+      "lastName": "Beethoven"
+    },
+    {
+      "composerId": 1255,
+      "firstName": "Wolfgang",
+      "lastName": "Mozart"
+    },
+    {
+      "composerId": 1277,
+      "firstName": "John",
+      "lastName": "Williams"
+    }
+  ]
+}
