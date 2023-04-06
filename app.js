@@ -60,7 +60,7 @@ const openapiSpecification = swaggerJsdoc(options);
 
 // wire openapiSpecification to app variable
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
-// app.use("/api", composerAPI);
+app.use("/api", composerAPI);
 
 //creating our http server on the port number
 http.createServer(app).listen(app.get("port"), function () {
