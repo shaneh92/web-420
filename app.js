@@ -17,12 +17,27 @@ const http = require("http");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const mongoose = require("mongoose");
+const composerAPI = require("./routes/hingtgen-composer-routes.js");
 
 //app variable assigned to express
 const app = express();
 
+const CONN =
+  "mongodb+srv://web420_user:1234@bellevueuniversity.ut5xprd.mongodb.net/web420DB"; //Our MongDB Server
 //port set
 app.set("port", process.env.PORT || 3000);
+
+//Connection to MongoDB
+mongoose
+  .connect(CONN)
+  .then(() => {
+    console.log(
+      "Connection to MongoDB database was successful\n  If you see this message it means you were able to connect to your MongoDB Atlas cluster"
+    ); //This will verify we have connect to server
+  })
+  .catch((err) => {
+    console.log("MongoDB Error: " + err.message); //Will tell us we did not connect to server
+  });
 
 // setting app to use express.json
 app.use(express.urlencoded({ extended: true }));
@@ -45,6 +60,7 @@ const openapiSpecification = swaggerJsdoc(options);
 
 // wire openapiSpecification to app variable
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
+// app.use("/api", composerAPI);
 
 //creating our http server on the port number
 http.createServer(app).listen(app.get("port"), function () {
