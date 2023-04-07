@@ -158,3 +158,6 @@ router.post("/composers", async (req, res) => {
     });
   }
 });
+
+// exporting router to make this work, otherwise app will crash
+module.exports = router;

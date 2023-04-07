@@ -22,14 +22,14 @@ const composerAPI = require("./routes/hingtgen-composer-routes.js");
 //app variable assigned to express
 const app = express();
 
-const CONN =
+const conn =
   "mongodb+srv://web420_user:1234@bellevueuniversity.ut5xprd.mongodb.net/web420DB"; //Our MongDB Server
 //port set
 app.set("port", process.env.PORT || 3000);
 
 //Connection to MongoDB
 mongoose
-  .connect(CONN)
+  .connect(conn)
   .then(() => {
     console.log(
       "Connection to MongoDB database was successful\n  If you see this message it means you were able to connect to your MongoDB Atlas cluster"
