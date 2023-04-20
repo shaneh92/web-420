@@ -19,6 +19,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const mongoose = require("mongoose");
 const composerAPI = require("./routes/hingtgen-composer-routes.js");
 const personAPI = require("./routes/hingtgen-person-routes.js");
+const userAPI = require("./routes/hingtgen-session-routes.js");
 
 //app variable assigned to express
 const app = express();
@@ -79,6 +80,7 @@ const openapiSpecification = swaggerJsdoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 app.use("/api", composerAPI);
 app.use("/api", personAPI);
+app.use("/api", userAPI);
 
 //creating our http server on the port number
 http.createServer(app).listen(app.get("port"), function () {
