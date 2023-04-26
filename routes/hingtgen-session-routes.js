@@ -16,7 +16,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/hingtgen-user.js");
 const bcrypt = require("bcryptjs");
-// const { v4: uuidv4 } = require("uuid");
 
 const saltRounds = 10;
 
