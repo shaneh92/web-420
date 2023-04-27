@@ -34,7 +34,7 @@ let invoiceSchema = new Schema({
 let customerSchema = new Schema({
   firstName: { type: String },
   lastName: { type: String },
-  userName: { type: String },
+  username: { type: String },
   invoices: [invoiceSchema],
 });
 

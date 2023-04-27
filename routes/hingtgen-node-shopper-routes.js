@@ -32,13 +32,13 @@ const Customer = require("../models/hingtgen-customer.js");
  *             required:
  *               - firstName
  *               - lastName
- *               - userName
+ *               - username
  *             properties:
  *               firstName:
  *                 type: string
  *               lastName:
  *                 type: string
- *               userName:
+ *               username:
  *                 type: string
  *     responses:
  *       '200':
@@ -54,7 +54,7 @@ router.post("/customers", async (req, res) => {
     const newCustomer = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
-      userName: req.body.userName,
+      username: req.body.username,
     };
 
     await Customer.create(newCustomer, function (err, customer) {
@@ -75,34 +75,40 @@ router.post("/customers", async (req, res) => {
     });
   }
 });
+
 /**
  * createInvoiceByUserName
  * @openapi
- * /api/customers/:username/invoices
+ * /api/customers/{username}/invoices:
  *   post:
  *     tags:
  *       - Customers
- *     name: createInvoice
- *     summary: Creates a new invoice
+ *     name: createInvoiceByUserName
+ *     description: This API will create a new invoice for the username provided
+ *     summary: add existing username to create a new invoice for the username
+ *     parameters:
+ *       - name: username
+ *         in: path
+ *         required: true
+ *         description:
+ *         schema:
+ *           type: string
  *     requestBody:
  *       description: invoice information
  *       content:
  *         application/json:
  *           schema:
  *             required:
- *               - userName
  *               - subtotal
  *               - tax
- *               - dateCreate
+ *               - dateCreated
  *               - dateShipped
  *               - lineItems
  *             properties:
- *               serName:
- *                 type: string
  *               subtotal:
- *                 type: string
+ *                 type: number
  *               tax:
- *                 type: string
+ *                 type: number
  *               dateCreated:
  *                 type: string
  *               dateShipped:
@@ -120,114 +126,65 @@ router.post("/customers", async (req, res) => {
  *                              type: number
  *     responses:
  *       '200':
- *         description: Invoice added to MongoDB
+ *         description: Customer added to MongoDB
  *       '500':
  *         description: Server Exception
  *       '501':
  *         description: MongoDB Exception
  */
 
-router.post("/customers/:username/invoices", async (req, res) => {});
-try {
-    Customer.findOne({userName: req.body.userName}) 
-}
-//   try {
-//     Customer.findOne({ userName: req.body.userName }, function (err, customer) {
-//       if (err) {
-//         console.log(err);
-//         res.status(501).send({
-//           message: `MongoDB Exception: ${err}`,
-//         });
-//       } else {
-//         console.log(customer);
-//         if (customer) {
-//           const newInvoice = {
-//             userName: req.body.userName,
-//             subtotal: req.body.subtotal,
-//             tax: req.body.tax,
-//             dateCreated: req.body.dateCreated,
-//             dateShipped: req.body.dateShipped,
-//             lineItems: {
-//               name: req.body.name,
-//               price: req.body.price,
-//               quantity: req.body.quantity,
-//             },
-//           };
-//           if (newInvoice) {
-//             console.log("In");
-//             res.status(200).send({
-//               message: "User logged in",
-//             });
-//           } else {
-//             console.log("Invalid username and/or password");
-//             res.status(401).send({
-//               message: `Invalid username and/or password`,
-//             });
-//           }
-//         }
-//         if (!user) {
-//           console.log("Invalid username and/or password");
-//           res.status(401).send({
-//             message: `Invalid username and/or password`,
-//           });
-//         }
-//       }
-//     });
-//   } catch (e) {
-//     console.log(e);
-//     res.status(500).send({
-//       message: `Server Exception: ${e}`,
-//     });
-//   }
-// });
-//       const newInvoice = {
-//         userName: req.body.userName,
-//         subtotal: req.body.subtotal,
-//         tax: req.body.tax,
-//         dateCreated: req.body.dateCreated,
-//         dateShipped: req.body.dateShipped,
-//         lineItems: {
-//           name: req.body.name,
-//           price: req.body.price,
-//           quantity: req.body.quantity,
-//         },
-//       };
-
-//       await Customer.create(newInvoice, function (err, invoice) {
-//         if (err) {
-//           console.log(err);
-//           res.status(500).send({
-//             message: `MongoDB Exception: ${err}`,
-//           });
-//         } else {
-//           console.log(invoice);
-//           res.json(invoice);
-//         }
-//       });
-
-//     });
-// } catch (e) {
-//     console.log(e);
-//     res.status(500).send({
-//       message: `Server Exception: ${e.message}`,
-//     });
-//   }
-// });
+router.post("/customers/:username/invoices", async (req, res) => {
+  try {
+    await Customer.findOne(
+      { username: req.params.username },
+      function (err, customer) {
+        let newInvoice = {
+          subtotal: req.body.subtotal,
+          tax: req.body.tax,
+          dateCreated: req.body.dateCreated,
+          dateShipped: req.body.dateShipped,
+          lineItems: req.body.lineItems,
+        };
+        if (err) {
+          console.log(err);
+          res.status(500).send({
+            message: `MongoDB Exception: ${err}`,
+          });
+        } else {
+          customer.invoices.push(newInvoice);
+          customer.save(function (err, customer) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(customer);
+              res.json(customer);
+            }
+          });
+        }
+      }
+    );
+  } catch (e) {
+    console.log(e);
+    res.status(500).send({
+      message: `Server Exception: ${e.message}`,
+    });
+  }
+});
 
 /**
  * findAllInvoicesByUserName
  * @openapi
- * /api/customers/:username/invoices:
+ * /api/customers/{username}/invoices:
  *   get:
  *     tags:
  *       - Customers
  *     description:  API for looking up an invoice
  *     summary: looks up an invoice
  *     parameters:
- *       - name: userName
+ *       - name: username
  *         in: path
  *         required: true
- *         description: Customer userName
+ *         description: Customer username
  *         schema:
  *           type: string
  *     responses:
@@ -240,17 +197,20 @@ try {
  */
 router.get("/customers/:username/invoices", async (req, res) => {
   try {
-    Customer.findOne({ userName: req.body.userName }, function (err, customer) {
-      if (err) {
-        console.log(err);
-        res.status(501).send({
-          message: `MongoDB Exception: ${err}`,
-        });
-      } else {
-        console.log(customer);
-        res.json(customer);
+    Customer.findOne(
+      { username: req.params.username },
+      function (err, customer) {
+        if (err) {
+          console.log(err);
+          res.status(501).send({
+            message: `MongoDB Exception: ${err}`,
+          });
+        } else {
+          console.log(customer);
+          res.json(customer);
+        }
       }
-    });
+    );
   } catch (e) {
     console.log(e);
     res.status(500).send({
