@@ -214,11 +214,16 @@ router.put("/composers/:id", async (req, res) => {
         console.log(composer);
         if (composer) {
           composer.set(req.body.firstName, req.body.lastName);
-          composer.save(function (err, composerUpdated) {
-            console.log(composerUpdated);
+          composer.save(function (err, savedComposer) {
+            console.log(savedComposer);
             res.status(200).send({
-              message: composerUpdated,
+              message: savedComposer,
             });
+          });
+        } else {
+          console.log("Invalid username and/or password");
+          res.status(401).send({
+            message: `Invalid username and/or password`,
           });
         }
         if (!composer) {
