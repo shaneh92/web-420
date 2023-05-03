@@ -204,29 +204,36 @@ router.post("/composers", async (req, res) => {
 
 router.put("/composers/:id", async (req, res) => {
   try {
+    console.log(req.body);
     Composer.findOne({ _id: req.params.id }, function (err, composer) {
       if (err) {
         console.log(err);
-        res.status(500).send({
+        res.status(501).send({
           message: `MongoDB Exception: ${err}`,
         });
       } else {
         console.log(composer);
+
         if (composer) {
-          composer.set(req.body.firstName, req.body.lastName);
+          console.log(req.body);
+          composer.set({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+          });
           composer.save(function (err, savedComposer) {
-            console.log(savedComposer);
-            res.status(200).send({
-              message: savedComposer,
-            });
+            if (err) {
+              console.log(err);
+              res.status(501).send({
+                message: `MongoDB Exception: ${err}`,
+              });
+            } else {
+              console.log(savedComposer);
+              res.status(200).send({
+                message: savedComposer,
+              });
+            }
           });
         } else {
-          console.log("Invalid username and/or password");
-          res.status(401).send({
-            message: `Invalid username and/or password`,
-          });
-        }
-        if (!composer) {
           console.log("Invalid composerId");
           res.status(401).send({
             message: `Invalid composerId`,
