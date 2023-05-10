@@ -21,6 +21,7 @@ const composerAPI = require("./routes/hingtgen-composer-routes.js");
 const personAPI = require("./routes/hingtgen-person-routes.js");
 const userAPI = require("./routes/hingtgen-session-routes.js");
 const customerAPI = require("./routes/hingtgen-node-shopper-routes.js");
+const teamsAPI = require("./routes/hingtgen-capstone-routes.js");
 
 //app variable assigned to express
 const app = express();
@@ -83,6 +84,7 @@ app.use("/api", composerAPI);
 app.use("/api", personAPI);
 app.use("/api", userAPI);
 app.use("/api", customerAPI);
+app.use("/api", teamsAPI);
 
 //creating our http server on the port number
 http.createServer(app).listen(app.get("port"), function () {
